@@ -1,17 +1,61 @@
-import React from 'react';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import './styles.css';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const TODO = () => {
+  const [value, setValue] = useState('');
+  const [values, set] = useState([]);
+  const onChange = event => setValue(event.target.value);
+  const add = text => set([...values, text]);
+  const del = i => set(values.filter((value, index) => index !== i));
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+  return (
+    <div className='todo'>
+      <h1>Todo</h1>
+      <form
+        id='todo_form'
+        onSubmit={e => {
+          const trimmed = value.trim();
+          e.preventDefault();
+          if (trimmed !== '') {
+            add(trimmed);
+            setValue('');
+            document.getElementById('send').focus();
+          }
+        }}
+      >
+        <input
+          id='send'
+          variant='outlined'
+          placeholder='Insert new todo'
+          autoFocus
+          onChange={onChange}
+          value={value}
+          size='12'
+        />
+        &nbsp;
+        <input
+          type='submit'
+          value='Send'
+        />
+      </form>
+
+      <ol className='list'>
+        {values.map((todo, index) => (
+          <li className='item' key={String(index)}>
+            &nbsp;
+            <span className='text'>{todo}</span>
+            &nbsp;
+            <button onClick={() => del(index)}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+};
+
+const rootElement = document.getElementById('main');
+ReactDOM.render(<TODO />, rootElement);
